@@ -1,0 +1,17 @@
+Project name : ANDARC
+
+Team:
+Akhil Raj Azhikodan	1MS13CS017
+Anvitha Gk Bhat		1MS13CS026
+Gayathri 		1MS13CS042
+
+Andarc is an arcade shooting game which is designed to be extremely hard. 
+The aim of the game is to avoid obstacle collision and shoot the enemy squares. 
+To control the movement of the shooter, tap the right half of the screen whereas 
+tap the left half of the screen to shoot the squares that  fall from the top. 
+Apart from the squares, there are the rectangle barriers that fall occasionally. 
+The shooter dies and the game gets over if he collides with either the squares 
+or the bigger rectangle barriers. Every second of the game, the gamer’s score is
+ incremented by 10 and for killing each of the squares, the score is incremented 
+by 100. The background changes when the difficulty increases at each level. The 
+local highscores are saved so that you can flaunt it to your friends.

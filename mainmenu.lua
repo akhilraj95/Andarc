@@ -24,6 +24,12 @@ audio.reserveChannels (1) -- one audio channel we need to reserve for the backgr
 function scene:create( event )
     local sceneGroup = self.view
 
+
+            local myImage = display.newImage( "andarc.png" )
+            myImage:translate( display.contentCenterX, display.contentCenterY*0.40 )
+            sceneGroup:insert(myImage)
+
+
                 -- Function to handle button events
             local function handleButtonEvent( event )
 
@@ -66,14 +72,14 @@ function scene:create( event )
             local function handleHighscoreButtonEvent( event )
 
                 if ( "ended" == event.phase ) then
-                    print( "Button was pressed and released" )
+                    composer.gotoScene( "highscore" ,"fade", 400)
                 end
             end
 
             -- Create the widget
             local buttonhighscore = widget.newButton(
                 {
-                    label = "highscores",
+                    label = "Highscore",
                     onEvent = handleHighscoreButtonEvent,
                     emboss = false,
                     -- Properties for a rounded rectangle button
@@ -102,10 +108,49 @@ function scene:create( event )
             -- button for exit
             --/////////////////////////////////////////////////////////////////////
 
-            local function handleHighscoreButtonEvent( event )
+            local function handleInstrButtonEvent( event )
 
                 if ( "ended" == event.phase ) then
-                    print( "Button was pressed and released" )
+                    composer.gotoScene( "instruction" ,"fade", 400)
+                end
+            end
+
+            -- Create the widget
+            local instr = widget.newButton(
+                {
+                    label = "highscores",
+                    onEvent = handleInstrButtonEvent,
+                    emboss = false,
+                    -- Properties for a rounded rectangle button
+                    shape = "roundedRect",
+                    width = 200,
+                    height = 40,
+                    cornerRadius = 1,
+                    labelColor = { default={ 1, 1, 1 }, over={ 0, 0, 0 } },
+                    fillColor = { default={0,0,0,1}, over={1,1,1,1} },
+                    strokeColor = { default={1,1,1,1}, over={0,0,0,1} },
+                    strokeWidth = 4
+                }
+            )
+
+
+            -- Center the button
+            instr.x = display.contentCenterX 
+            instr.y = display.contentCenterY + 120
+
+            -- Change the button's label text
+            instr:setLabel( "Instruction" )
+            sceneGroup:insert(instr)
+
+
+            --/////////////////////////////////////////////////////////////////////
+            -- button for exit
+            --/////////////////////////////////////////////////////////////////////
+
+            local function handleExitButtonEvent( event )
+
+                if ( "ended" == event.phase ) then
+                   native.requestExit()
                 end
             end
 
@@ -113,7 +158,7 @@ function scene:create( event )
             local exit = widget.newButton(
                 {
                     label = "highscores",
-                    onEvent = handleHighscoreButtonEvent,
+                    onEvent = handleExitButtonEvent,
                     emboss = false,
                     -- Properties for a rounded rectangle button
                     shape = "roundedRect",
@@ -130,11 +175,14 @@ function scene:create( event )
 
             -- Center the button
             exit.x = display.contentCenterX 
-            exit.y = display.contentCenterY + 120
+            exit.y = display.contentCenterY + 180
 
             -- Change the button's label text
             exit:setLabel( "Exit" )
             sceneGroup:insert(exit)
+
+
+
 
 end
 

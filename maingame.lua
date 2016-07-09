@@ -10,27 +10,28 @@ local raintimer, barriertimer , scoretimer
 
 composer.recycleOnSceneChange = false
 
------------------------------------------------------------------------------------
----music
-----------------------------------------------------------------------------------
-gamebgmusic = audio.loadSound ("mainmusic.mp3")
-
-musicisOn = true 
-
-audio.reserveChannels (1) -- one audio channel we need to reserve for the background music
-
----------------------------------------------------------------------------------
 function scene:create( event )
 	local sceneGroup = self.view
+	-----------------------------------------------------------------------------------
+	---music
+	----------------------------------------------------------------------------------
+	gamebgmusic = audio.loadSound ("mainmusic.mp3")
 
+	musicisOn = true 
+
+	audio.reserveChannels (1) -- one audio channel we need to reserve for the background music
+
+	---------------------------------------------------------------------------------
 end
 
 function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
+   
     playgameMusic(gamebgmusic)
 
 	composer.removeScene( "gameover" )
+	system.activate( "multitouch" )
 
 	
 	if phase == "will" then
@@ -53,6 +54,34 @@ PLAYER_SCORE = 0					-- initial score
 PLAYER_SCORE_UPDATE_RATE = 500	-- constant update frequency of the score
 
 --///////////////////////////////////////////////////////////////////////
+-- 	Tutorial System
+	local options =
+	{
+    width = contW/2,
+    height = contH,
+	}
+
+	local myImageshoot = display.newImage( "shoot_tutorial.png" ,options)
+    myImageshoot:translate( contW*0.25, centerY )
+    sceneGroup:insert(myImageshoot)
+
+    local myImagemove = display.newImage( "move_tutorial.png" ,options)
+    myImagemove:translate( contW*0.75, centerY )
+    sceneGroup:insert(myImagemove)
+
+    transition.fadeOut( myImagemove, { time=2000 } )
+    transition.fadeOut( myImageshoot, { time=2000 } )
+  
+    local function removetutorial()
+    	myImagemove:removeSelf()
+    	myImageshoot:removeSelf()
+    end
+
+    tutorialtimer = timer.performWithDelay( 2000, removetutorial , 1)
+
+--///////////////////////////////////////////////////////////////////////
+
+--///////////////////////////////////////////////////////////////////////
 --	Scoring System
 --///////////////////////////////////////////////////////////////////////
 local options = {
@@ -71,15 +100,21 @@ scoreText:setFillColor( 1, 1, 1)
 sceneGroup:insert(scoreText)
 
 level = 0
+lvlcnt = 0
 local function scoreUpdate()
 	PLAYER_SCORE = PLAYER_SCORE + 10
 	scoreText.text = PLAYER_SCORE
 	-- changing difficulty
 	if(PLAYER_SCORE > level + 500) then
+		lvlcnt = lvlcnt + 1
 		level = PLAYER_SCORE
 		ENEMY_SPAWN_RATE = ENEMY_SPAWN_RATE - 50
 		BARRIER_SPAWN_RATE = BARRIER_SPAWN_RATE - 50
-	   display.setDefault("background",math.random(5)/10,math.random(5)/10,math.random(5)/10)
+	    display.setDefault("background",math.random(5)/10,math.random(5)/10,math.random(5)/10)
+		local level = display.newText("level - "..lvlcnt, centerX,centerY, native.systemFont, 30 )
+	    level:setFillColor( 1, 1, 1 )
+	    sceneGroup:insert(level)
+	   transition.fadeOut( level, { time=2000 } )
 	end
 end
 
@@ -106,6 +141,13 @@ scoretimer = timer.performWithDelay( PLAYER_SCORE_UPDATE_RATE , scoreUpdate , 10
 
 local player = display.newCircle( contW*1/15, contH*9.5/10, 20)
 speed = 0.3
+
+local gradient = {
+    type="gradient",
+    color1={ 1, 1, 1 }, color2={0.9,0.9,0.9 }, direction="down"
+    }
+player:setFillColor(gradient )
+
 sceneGroup:insert(player)
 
 physics.addBody(player)
@@ -125,7 +167,7 @@ end
 player.collision = gameover
 player:addEventListener( "collision", player)
 
-dirconstant= 0
+dirconstant= 1
 function moveright()
 	dirconstant =0
 
@@ -245,6 +287,13 @@ rainFall = function()
 	rainDrop.collision = onLocalCollision
 	rainDrop:addEventListener( "collision", rainDrop )
 
+
+	local gradient = {
+    type="gradient",
+    color1={ 1, 1, 1 }, color2={ 0.7,0.7,0.7 }, direction="down"
+    }
+	rainDrop:setFillColor(gradient )
+
 end
  
 
@@ -272,6 +321,13 @@ barrierFall = function()
 	barrierDrop.bodyType = "kinematic"
 	barrierDrop.gravityScale = 0
 	barrierDrop:setLinearVelocity( 0,100 )
+
+
+	local gradient = {
+    type="gradient",
+    color1={ 1, 1, 1 }, color2={ 0.7,0.7,0.7 }, direction="down"
+	}
+	barrierDrop:setFillColor( gradient )
 end
 barriertimer = timer.performWithDelay( BARRIER_SPAWN_RATE,  barrierFall, 100000 )
 
